@@ -1,39 +1,33 @@
-import { useState, useEffect } from "react";
+import React, { useState } from "react";
+import SignUpForm from "./SignUpForm";
+import SuccessForm from "./SuccessForm";
 
-function useForm(callback, /* emailProfile ,*/ validate) {
-  const [values, setValues] = useState({
-    name: "",
-    email: "",
-    gender: "male",
-    phone: "",
-    password: ""
-  });
+function Form() {
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  /* const [emailValue, setEmailValue] = useState(""); */
+  const [username, setUsername] = useState("");
 
-  const [errors, setError] = useState({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  console.log("outside: " + username);
 
-  const handleChange = (event) => {
-    const { name, value, type, checked } = event.target;
+  function submitForm(item) {
+    // username = item
+    setUsername(item);
+    console.log("inside submitForm: " + username);
+    setIsSubmitted(true);
+  }
 
-    type === "checkbox"
-      ? setValues({ ...values, [name]: checked })
-      : setValues({ ...values, [name]: value });
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    setError(validate(values));
-    setIsSubmitting(true);
-    console.log(values.email.split("@", 1)[0]);
-  };
-
-  useEffect(() => {
-    if (Object.keys(errors).length === 0 && isSubmitting) {
-      callback(values.email.split("@", 1)[0]);
-    }
-  }, [errors]);
-
-  return { handleChange, values, handleSubmit, errors };
+  
+  return (
+    <div>
+      {!isSubmitted ? (
+        <SignUpForm
+           submitForm={submitForm}
+        />
+      ) : (
+        <SuccessForm username={username} />
+      )}
+    </div>
+  );
 }
 
-export default useForm;
+export default Form;
